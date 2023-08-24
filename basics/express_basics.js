@@ -1,5 +1,22 @@
 const express = require('express');
 const app = express();
+const morgan = require('morgan')
+
+
+// Using middleware
+// app.use((req, res, next) => {
+//     console.log("url : ", req.url);
+//     console.log("method : ", req.headers);
+//     console.log("body : ", req.body);
+//     next();
+// })
+
+// Using morgan middleware used for logging 
+app.use(morgan('dev'))
+
+
+// Using middleware for static files
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
     console.log("This is the home page request")
@@ -9,7 +26,7 @@ app.get('/', (req, res) => {
 app.set('view engine', 'ejs')
 
 app.get('/ejs/home', (req, res) => {
-    res.render('index', { username: 'Deepak' })
+    res.render('index', { username: 'Deepak', title: 'Home Page' })
 })
 
 app.get('/blogs/create', (req, res) => {
@@ -18,15 +35,15 @@ app.get('/blogs/create', (req, res) => {
         { title: "The Kite Runner", snippet: "Khaled Hoseinni's masterpiece" },
         { title: "The Alchemist", snippet: "Paulo Coelho at his best. Inspriring, motitvating and thrilling" }
     ]
-    res.render('create', { blogs })
+    res.render('create', { blogs, title: 'Create Blog Page' })
 })
 
 app.get('/ejs/about', (req, res) => {
-    res.render('about')
+    res.render('about', { title: 'About Page' })
 })
 
 app.get('/ejs/contact', (req, res) => {
-    res.render('contact')
+    res.render('contact', { title: 'Contact Us page' })
 })
 
 app.get('/home', (req, res) => {
