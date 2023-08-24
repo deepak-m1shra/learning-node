@@ -1,8 +1,17 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan')
+const mongoose = require('mongoose')
+const Blog = require('./models/blog')
 
+// connect to mongodb
+const dbURI = 'mongodb+srv://root:root@nodelearningcluster.h2sfxrm.mongodb.net/node-app?retryWrites=true&w=majority';
 
+mongoose.connect(dbURI)
+    .then((result) => app.listen(3000, () => {
+        console.log("Listening on port 3000")
+    }))
+    .catch((err) => console.log(err))
 // Using middleware
 // app.use((req, res, next) => {
 //     console.log("url : ", req.url);
@@ -13,6 +22,56 @@ const morgan = require('morgan')
 
 // Using morgan middleware used for logging 
 app.use(morgan('dev'))
+
+// mongoose and mongo sandbox routes
+app.get('/add-blog', (req, res) => {
+    const blog = new Blog({
+        title: 'new blog',
+        snippet: 'very good blog',
+        body: 'just awesome blog'
+    });
+    blog.save()
+        .then((result) => {
+            res.send(result)
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+})
+
+app.get('/all-blogs', (req, res) => {
+    Blog.find()
+        .then(result => {
+            res.send(result)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+})
+
+app.get('/single-blog', (req, res) => {
+    Blog.findById('64e76e51e9ab34d8a1f8a6ae')
+        .then(result => {
+            res.send(result)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+})
+
+app.get('/blogs', (req, res) => {
+    Blog.find().sort()
+        .then(result => {
+            res.render('index', {
+                title: 'All Blogs',
+                blogs: result,
+                username: 'Deepak'
+            })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+})
 
 
 // Using middleware for static files
@@ -63,9 +122,4 @@ app.get('/contact', (req, res) => {
 // 404 page
 app.use((req, res) => {
     res.status(404).sendFile('./htmls/404.html', { root: __dirname })
-})
-
-
-app.listen(3000, () => {
-    console.log("Listening on port 3000")
 })
