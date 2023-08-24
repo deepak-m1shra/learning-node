@@ -6,6 +6,29 @@ app.get('/', (req, res) => {
     res.sendFile('./htmls/index.html', { root: __dirname })
 })
 
+app.set('view engine', 'ejs')
+
+app.get('/ejs/home', (req, res) => {
+    res.render('index', { username: 'Deepak' })
+})
+
+app.get('/blogs/create', (req, res) => {
+    blogs = [
+        { title: "Harry Potter", snippet: "Amazing imagination filled with mystery" },
+        { title: "The Kite Runner", snippet: "Khaled Hoseinni's masterpiece" },
+        { title: "The Alchemist", snippet: "Paulo Coelho at his best. Inspriring, motitvating and thrilling" }
+    ]
+    res.render('create', { blogs })
+})
+
+app.get('/ejs/about', (req, res) => {
+    res.render('about')
+})
+
+app.get('/ejs/contact', (req, res) => {
+    res.render('contact')
+})
+
 app.get('/home', (req, res) => {
     res.redirect('/')
 })

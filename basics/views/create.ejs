@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Blog</title>
+</head>
+<body>
+    <%- include('./partials/nav.ejs') %>
+    <% const name = 'Deepak' %>
+
+    <h1>Create a Blog page (EJS)</h1>
+    <h2>Username: <%= name %></h2>
+    <div class="create-blog content">
+        <form action="">
+            <label for="title">Blog title:</label>
+            <input type="text" id="title" required>
+            <label for="snippet">Blog Snippet</label>
+            <input type="text" id="snippet" required>
+            <br>
+            <br>
+            <label for="body">Blog Body</label>
+            <textarea name="body" id="body"></textarea>
+            <button>Submit</button>
+        </form>
+        <div class="all-blogs">
+                <% if(blogs.length > 0) { %>
+                <% blogs.forEach(blog => { %>
+                <h3 class="title"><%= blog.title %></h3>
+                <p class="snippet"><%= blog.snippet %></p>
+                <% })%>
+            <% } else {%>
+            <h4>Currently, there are no blog entries </h4>
+            <% }%>
+        </div>
+    </div>
+    <%- include('./partials/footer.ejs') %>
+</body>
+</html>
