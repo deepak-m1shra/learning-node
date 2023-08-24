@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan')
 const mongoose = require('mongoose')
-const Blog = require('./models/blog')
+
+const blogRoutes = require('./routes/blogRoutes');
+const router = require('./routes/blogRoutes');
 
 // connect to mongodb
 const dbURI = 'mongodb+srv://root:root@nodelearningcluster.h2sfxrm.mongodb.net/node-app?retryWrites=true&w=majority';
@@ -51,63 +53,10 @@ app.get('/all-blogs', (req, res) => {
         })
 })
 
-app.post('/blogs', (req, res) => {
-    console.log('In /blogs method :: ', req.body)
-    const blog = new Blog(req.body);
-
-    blog.save()
-        .then(result => {
-            // res.send(result)
-            res.redirect('/blogs')
-        })
-        .catch(err => {
-            console.log(err)
-        })
-})
-
 app.get('/single-blog', (req, res) => {
     Blog.findById('64e76e51e9ab34d8a1f8a6ae')
         .then(result => {
             res.send(result)
-        })
-        .catch(err => {
-            console.log(err)
-        })
-})
-
-app.get('/blogs', (req, res) => {
-    Blog.find().sort()
-        .then(result => {
-            res.render('index', {
-                title: 'All Blogs',
-                blogs: result,
-                username: 'Deepak'
-            })
-        })
-        .catch(err => {
-            console.log(err)
-        })
-})
-
-app.get('/blogs/:id', (req, res) => {
-    Blog.findById(req.params.id)
-        .then(result => {
-            res.render('details', {
-                blog: result,
-                title: 'Blog Details'
-            })
-        })
-        .catch(err => {
-            console.log(err)
-        })
-
-})
-
-app.delete('/blogs/:id', (req, res) => {
-    const id = req.params.id;
-    Blog.findByIdAndDelete(id)
-        .then(result => {
-            res.json({ redirect: '/blogs' })
         })
         .catch(err => {
             console.log(err)
@@ -121,15 +70,6 @@ app.get('/', (req, res) => {
 
 app.get('/ejs/home', (req, res) => {
     res.redirect('/blogs')
-})
-
-app.get('/blogs/create', (req, res) => {
-    blogs = [
-        { title: "Harry Potter", snippet: "Amazing imagination filled with mystery" },
-        { title: "The Kite Runner", snippet: "Khaled Hoseinni's masterpiece" },
-        { title: "The Alchemist", snippet: "Paulo Coelho at his best. Inspriring, motitvating and thrilling" }
-    ]
-    res.render('create', { blogs, title: 'Create Blog Page' })
 })
 
 app.get('/ejs/about', (req, res) => {
@@ -153,6 +93,9 @@ app.get('/contact', (req, res) => {
     console.log("Request received")
     res.sendFile('./htmls/contact.html', { root: __dirname })
 })
+
+// Use the imported route as a middleware & scoping to specific route
+app.use('/blogs', blogRoutes);
 
 // 404 page
 app.use((req, res) => {
