@@ -20,16 +20,18 @@ mongoose.connect(dbURI)
 //     next();
 // })
 
+// Using middleware for static files
+app.use(express.static('public'))
+app.use(express.json())
+app.set('view engine', 'ejs')
+app.use(express.urlencoded({ extended: true })) // required to read from form fields
+
 // Using morgan middleware used for logging 
 app.use(morgan('dev'))
 
 // mongoose and mongo sandbox routes
 app.get('/add-blog', (req, res) => {
-    const blog = new Blog({
-        title: 'new blog',
-        snippet: 'very good blog',
-        body: 'just awesome blog'
-    });
+    const blog = new Blog(req.body);
     blog.save()
         .then((result) => {
             res.send(result)
@@ -43,6 +45,20 @@ app.get('/all-blogs', (req, res) => {
     Blog.find()
         .then(result => {
             res.send(result)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+})
+
+app.post('/blogs', (req, res) => {
+    console.log('In /blogs method :: ', req.body)
+    const blog = new Blog(req.body);
+
+    blog.save()
+        .then(result => {
+            // res.send(result)
+            res.redirect('/blogs')
         })
         .catch(err => {
             console.log(err)
@@ -73,19 +89,38 @@ app.get('/blogs', (req, res) => {
         })
 })
 
+app.get('/blogs/:id', (req, res) => {
+    Blog.findById(req.params.id)
+        .then(result => {
+            res.render('details', {
+                blog: result,
+                title: 'Blog Details'
+            })
+        })
+        .catch(err => {
+            console.log(err)
+        })
 
-// Using middleware for static files
-app.use(express.static('public'))
+})
+
+app.delete('/blogs/:id', (req, res) => {
+    const id = req.params.id;
+    Blog.findByIdAndDelete(id)
+        .then(result => {
+            res.json({ redirect: '/blogs' })
+        })
+        .catch(err => {
+            console.log(err)
+        })
+})
 
 app.get('/', (req, res) => {
     console.log("This is the home page request")
     res.sendFile('./htmls/index.html', { root: __dirname })
 })
 
-app.set('view engine', 'ejs')
-
 app.get('/ejs/home', (req, res) => {
-    res.render('index', { username: 'Deepak', title: 'Home Page' })
+    res.redirect('/blogs')
 })
 
 app.get('/blogs/create', (req, res) => {

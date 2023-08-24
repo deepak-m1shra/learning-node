@@ -8,11 +8,11 @@
     <h1>Create a Blog page (EJS)</h1>
     <h2>Username: <%= name %></h2>
     <div class="create-blog content">
-        <form action="">
+        <form action="/blogs" method="POST">
             <label for="title">Blog title:</label>
-            <input type="text" id="title" required>
+            <input type="text" id="title" name='title' required>
             <label for="snippet">Blog Snippet</label>
-            <input type="text" id="snippet" required>
+            <input type="text" id="snippet" name='snippet' required>
             <br>
             <br>
             <label for="body">Blog Body</label>

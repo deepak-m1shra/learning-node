@@ -9,3 +9,13 @@ h3 {
 body {
     background-color: cornflowerblue;
 }
+
+a {
+    text-decoration: none;
+    color: black
+}
+
+a.delete {
+    text-decoration: underline;
+    color:blueviolet;
+}
